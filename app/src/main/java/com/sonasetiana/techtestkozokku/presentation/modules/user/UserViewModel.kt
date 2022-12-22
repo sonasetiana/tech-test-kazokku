@@ -9,7 +9,7 @@ import com.sonasetiana.techtestkozokku.domain.modules.user.UserUseCase
 import kotlinx.coroutines.flow.Flow
 
 class UserViewModel(
-    private val userUseCase: UserUseCase
+    userUseCase: UserUseCase
 ) : ViewModel(){
     val userListState : Flow<PagingData<UserResponse>> = userUseCase.getUserList(10).cachedIn(viewModelScope)
 }

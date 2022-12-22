@@ -47,14 +47,3 @@ fun UserCard(
     }
 
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewUserCard() {
-    TechTestKozokkuTheme {
-        UserCard(
-            fullName = "Sona Setiana",
-            picture = "https://randomuser.me/api/portraits/women/58.jpg"
-        )
-    }
-}
