@@ -21,14 +21,21 @@ interface ApiServices {
 
     @GET("user/{id}/post")
     suspend fun getUserPost(
-        @Path("id") userId: String
+        @Path("id") userId: String,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
     ): ListUserPostResponse
 
     @GET("post")
-    suspend fun getAllPost(): ListUserPostResponse
+    suspend fun getAllPost(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+    ): ListUserPostResponse
 
     @GET("tag/{tagName}/post")
     suspend fun getPostByTags(
-        @Path("tagName") tagName: String
+        @Path("tagName") tagName: String,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
     ): ListUserPostResponse
 }

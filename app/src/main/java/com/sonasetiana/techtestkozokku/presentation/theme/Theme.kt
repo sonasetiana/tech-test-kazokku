@@ -1,4 +1,4 @@
-package com.sonasetiana.techtestkozokku.ui.theme
+package com.sonasetiana.techtestkozokku.presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

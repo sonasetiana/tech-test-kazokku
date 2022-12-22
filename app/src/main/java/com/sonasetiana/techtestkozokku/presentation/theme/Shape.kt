@@ -1,4 +1,4 @@
-package com.sonasetiana.techtestkozokku.ui.theme
+package com.sonasetiana.techtestkozokku.presentation.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

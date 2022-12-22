@@ -2,9 +2,14 @@ package com.sonasetiana.techtestkozokku.data.di
 
 import androidx.room.Room
 import com.sonasetiana.techtestkozokku.BuildConfig
-import com.sonasetiana.techtestkozokku.data.local.LocalDatabase
+import com.sonasetiana.techtestkozokku.data.local.LocalDataSource
+import com.sonasetiana.techtestkozokku.data.local.db.LocalDatabase
+import com.sonasetiana.techtestkozokku.data.remote.datasource.RemoteDataSource
+import com.sonasetiana.techtestkozokku.data.remote.datasource.RemoteDataSourceImpl
 import com.sonasetiana.techtestkozokku.data.remote.network.ApiServices
 import com.sonasetiana.techtestkozokku.data.remote.network.HeaderInterceptor
+import com.sonasetiana.techtestkozokku.domain.repository.DataRepository
+import com.sonasetiana.techtestkozokku.data.repository.DataRepositoryImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -43,4 +48,10 @@ val networkModule = module {
             .build()
         retrofit.create(ApiServices::class.java)
     }
+}
+
+val repositoryModule = module {
+    single { LocalDataSource(get(), get(), get()) }
+    single<RemoteDataSource> { RemoteDataSourceImpl(get()) }
+    single<DataRepository> { DataRepositoryImpl(get()) }
 }

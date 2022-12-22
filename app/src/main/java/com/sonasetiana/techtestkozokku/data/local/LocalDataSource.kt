@@ -1,22 +1,21 @@
 package com.sonasetiana.techtestkozokku.data.local
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
 import com.sonasetiana.techtestkozokku.data.local.dao.FavoriteDao
 import com.sonasetiana.techtestkozokku.data.local.dao.OwnerDao
 import com.sonasetiana.techtestkozokku.data.local.dao.TagDao
 import com.sonasetiana.techtestkozokku.data.local.entity.FavoriteEntity
 import com.sonasetiana.techtestkozokku.data.local.entity.OwnerEntity
 import com.sonasetiana.techtestkozokku.data.local.entity.TagEntity
+import kotlinx.coroutines.flow.Flow
 
-@Database(entities = [FavoriteEntity::class,
-    TagEntity::class,
-    OwnerEntity::class],
-    version = 1,
-    exportSchema = false
-)
-abstract class LocalDatabase : RoomDatabase(){
-    abstract fun favoriteDao(): FavoriteDao
-    abstract fun tagDao(): TagDao
-    abstract fun ownerDao(): OwnerDao
+class LocalDataSource(
+    private val favoriteDao: FavoriteDao,
+    private val tagDao: TagDao,
+    private val ownerDao: OwnerDao
+) {
+    fun getAllFavorite(): Flow<List<FavoriteEntity>> = favoriteDao.getFavorites()
+
+    fun getTags(id: String): Flow<List<TagEntity>> = tagDao.getTags(id)
+
+    fun getOwner(id: String): Flow<OwnerEntity> = ownerDao.getOwner(id)
 }
