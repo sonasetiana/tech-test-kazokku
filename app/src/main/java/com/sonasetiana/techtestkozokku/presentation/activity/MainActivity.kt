@@ -33,7 +33,6 @@ import com.sonasetiana.techtestkozokku.presentation.navigation.NavigationItem
 import com.sonasetiana.techtestkozokku.presentation.navigation.Screen
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
 import com.sonasetiana.techtestkozokku.presentation.theme.TechTestKozokkuTheme
-import com.sonasetiana.techtestkozokku.utils.upFirst
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,10 +64,11 @@ fun MainScreen(
     }
     navController.addOnDestinationChangedListener { _, destination, _ ->
         currentRoute = destination.route.orEmpty()
-        toolbarTitle = if (currentRoute != Screen.Detail.route) {
-            currentRoute.upFirst()
-        } else {
-            toolbarTitle
+        toolbarTitle = when(currentRoute) {
+            Screen.User.route -> "Users"
+            Screen.Post.route -> "Posts"
+            Screen.Favorite.route -> "Your Like"
+            else -> toolbarTitle
         }
 
     }

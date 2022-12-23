@@ -40,8 +40,8 @@ fun TimeLineCard(
         Column {
             TimeLineHeader(
                 picture = item.owner?.picture.orEmpty(),
-                fullName = "${item.owner?.title} ${item.owner?.firstName} ${item.owner?.lastName}",
-                publishDate = item.publishDate.orEmpty(),
+                fullName = item.owner?.fullName.orEmpty(),
+                publishDate = item.datePublishing,
                 modifier = Modifier.padding(Spacing.medium)
             )
             Card(

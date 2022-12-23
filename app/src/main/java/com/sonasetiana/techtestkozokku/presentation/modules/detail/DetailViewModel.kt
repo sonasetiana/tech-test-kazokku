@@ -56,4 +56,20 @@ class DetailViewModel(
         }
     }
 
+    fun checkFavorite(userId: String): Flow<RoomResult<Boolean>> = useCase.checkFavorite(userId)
+
+    fun saveFavorite(data: UserPostResponse) {
+        viewModelScope.launch {
+            useCase.saveFavorite(data)
+            useCase.saveOwner(data)
+        }
+    }
+
+    fun deleteFavorite(data: UserPostResponse) {
+        viewModelScope.launch {
+            useCase.deleteFavorite(data)
+            useCase.deleteOwner(data)
+        }
+    }
+
 }

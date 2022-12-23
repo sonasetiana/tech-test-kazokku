@@ -13,7 +13,8 @@ object DateExt {
         }
     }
 
-    fun parseDate(dateTime: String): String {
+    fun parseDate(dateTime: String?): String {
+        if (dateTime == null) return ""
         val pattern = "dd MMMM yyyy HH:mm:ss"
         val date = convertDate(dateTime)
         return if (date != null) {

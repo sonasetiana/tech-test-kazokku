@@ -7,9 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FavoriteUseCase {
     fun getFavorite(): Flow<PagingData<UserPostResponse>>
-    suspend fun saveFavorite(data: UserPostResponse)
     suspend fun deleteFavorite(data: UserPostResponse)
-    suspend fun saveOwner(data: UserPostResponse)
     suspend fun deleteOwner(data: UserPostResponse)
     fun checkFavorite(id: String): Flow<RoomResult<Boolean>>
 }

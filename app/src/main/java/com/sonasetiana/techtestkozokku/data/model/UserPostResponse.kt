@@ -1,6 +1,7 @@
 package com.sonasetiana.techtestkozokku.data.model
 
 import com.google.gson.annotations.SerializedName
+import com.sonasetiana.techtestkozokku.utils.DateExt
 
 data class UserPostResponse(
 
@@ -24,7 +25,10 @@ data class UserPostResponse(
 
 	@field:SerializedName("owner")
 	val owner: UserResponse? = null
-)
+) {
+	val datePublishing: String
+	get() = DateExt.parseDate(publishDate)
+}
 
 data class ListUserPostResponse(
 	@field:SerializedName("data")

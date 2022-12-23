@@ -1,6 +1,8 @@
 package com.sonasetiana.techtestkozokku.data.model
 
 import com.google.gson.annotations.SerializedName
+import com.sonasetiana.techtestkozokku.utils.DateExt
+import com.sonasetiana.techtestkozokku.utils.upFirst
 
 data class UserDetailResponse(
 
@@ -39,7 +41,22 @@ data class UserDetailResponse(
 
 	@field:SerializedName("location")
 	val location: UserDetailLocation? = null
-)
+){
+	val joinDate: String
+		get() = DateExt.parseDate(registerDate)
+
+	val dateOfBirthFormatted: String
+		get() = DateExt.parseDate(dateOfBirth)
+
+	val updatedDateFormatted: String
+		get() = DateExt.parseDate(updatedDate)
+
+	val fullName: String
+		get() = "${title.upFirst()} ${firstName.upFirst()} ${lastName.upFirst()}"
+
+	val address: String
+		get() = "${location?.country}, ${location?.street}, ${location?.city}, ${location?.state}"
+}
 
 data class UserDetailLocation(
 

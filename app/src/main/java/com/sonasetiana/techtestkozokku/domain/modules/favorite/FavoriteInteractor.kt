@@ -11,11 +11,7 @@ class FavoriteInteractor(
 ) : FavoriteUseCase {
     override fun getFavorite(): Flow<PagingData<UserPostResponse>> = repository.getAllFavorite()
 
-    override suspend fun saveFavorite(data: UserPostResponse) = repository.saveFavorite(data)
-
     override suspend fun deleteFavorite(data: UserPostResponse) = repository.deleteFavorite(data)
-
-    override suspend fun saveOwner(data: UserPostResponse) = repository.saveOwner(data)
 
     override suspend fun deleteOwner(data: UserPostResponse) = repository.deleteOwner(data)
 

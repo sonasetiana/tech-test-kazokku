@@ -43,7 +43,7 @@ fun UserScreen(
             items(userItems.itemCount) { index ->
                 userItems[index]?.let { user ->
                     UserCard(
-                        fullName = "${user.title} ${user.firstName} ${user.lastName}",
+                        fullName = user.fullName,
                         picture = user.picture.orEmpty(),
                         modifier = Modifier.padding(Spacing.small).clickable {
                             openDetail?.invoke(user.id.orEmpty())

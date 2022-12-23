@@ -2,7 +2,6 @@ package com.sonasetiana.techtestkozokku.domain.modules.detail
 
 import androidx.paging.PagingData
 import com.sonasetiana.techtestkozokku.data.local.db.RoomResult
-import com.sonasetiana.techtestkozokku.data.local.entity.UserEntity
 import com.sonasetiana.techtestkozokku.data.model.UserDetailResponse
 import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
 import com.sonasetiana.techtestkozokku.data.remote.network.ApiResponse
@@ -30,4 +29,14 @@ class DetailInteractor(
     override suspend fun deleteUser(id: String) {
         localRepository.deleteUser(id)
     }
+
+    override suspend fun saveFavorite(data: UserPostResponse) = localRepository.saveFavorite(data)
+
+    override suspend fun deleteFavorite(data: UserPostResponse) = localRepository.deleteFavorite(data)
+
+    override suspend fun saveOwner(data: UserPostResponse) = localRepository.saveOwner(data)
+
+    override suspend fun deleteOwner(data: UserPostResponse) = localRepository.deleteOwner(data)
+
+    override fun checkFavorite(id: String): Flow<RoomResult<Boolean>> = localRepository.checkFavorite(id)
 }

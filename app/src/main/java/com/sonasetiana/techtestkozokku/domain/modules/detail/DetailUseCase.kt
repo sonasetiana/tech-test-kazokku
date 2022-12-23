@@ -13,4 +13,9 @@ interface DetailUseCase {
     fun checkUser(id: String): Flow<RoomResult<Boolean>>
     suspend fun saveUser(id: String)
     suspend fun deleteUser(id: String)
+    suspend fun saveFavorite(data: UserPostResponse)
+    suspend fun deleteFavorite(data: UserPostResponse)
+    suspend fun saveOwner(data: UserPostResponse)
+    suspend fun deleteOwner(data: UserPostResponse)
+    fun checkFavorite(id: String): Flow<RoomResult<Boolean>>
 }

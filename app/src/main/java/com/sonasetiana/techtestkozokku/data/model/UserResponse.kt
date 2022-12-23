@@ -1,6 +1,7 @@
 package com.sonasetiana.techtestkozokku.data.model
 
 import com.google.gson.annotations.SerializedName
+import com.sonasetiana.techtestkozokku.utils.upFirst
 
 data class UserResponse(
     @field:SerializedName("id")
@@ -13,7 +14,10 @@ data class UserResponse(
     val lastName: String? = null,
     @field:SerializedName("picture")
     val picture: String? = null,
-)
+) {
+    val fullName: String
+    get() = "${title.upFirst()} ${firstName.upFirst()} ${lastName.upFirst()}"
+}
 
 data class ListUserResponse(
     @field:SerializedName("data")

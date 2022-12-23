@@ -60,9 +60,9 @@ fun SearchField(
             unfocusedIndicatorColor = Color.Transparent,
         ),
         modifier = modifier
-            .padding(16.dp)
+            .padding(Spacing.normal)
             .fillMaxWidth()
-            .heightIn(48.dp)
+            .heightIn(40.dp)
             .border(
                 Spacing.Space1,
                 color = Color.Gray,

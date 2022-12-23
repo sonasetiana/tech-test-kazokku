@@ -35,6 +35,7 @@ import com.sonasetiana.techtestkozokku.presentation.components.TopSearchBar
 import com.sonasetiana.techtestkozokku.presentation.theme.HorizontalSpace
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
 import com.sonasetiana.techtestkozokku.presentation.theme.VerticalSpace
+import com.sonasetiana.techtestkozokku.utils.upFirst
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -115,6 +116,7 @@ fun DetailScreen(
                                 userData = uiState.data,
                                 isUserAdded = isUserAdded,
                                 searchKeyword = keyword,
+                                viewModel = viewModel,
                                 onAddUserClick = { id ->
                                     if (isUserAdded) {
                                         viewModel.deleteUser(id)
@@ -149,16 +151,19 @@ fun TimeLineListView(
     isUserAdded: Boolean,
     searchKeyword: String,
     onAddUserClick: ((String) -> Unit)? = null,
+    viewModel: DetailViewModel
 ) {
+
+
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(Spacing.medium)
     ) {
         item {
             DetailUserInfo(
                 user = userData,
                 isAdded = isUserAdded,
-                onClick = onAddUserClick
+                onClick = onAddUserClick,
+                modifier = Modifier.padding(Spacing.medium)
             )
         }
         if (searchKeyword.isNotEmpty()) {
@@ -166,11 +171,15 @@ fun TimeLineListView(
                 key?.text?.lowercase()?.contains(searchKeyword) == true
             }.toList()
             items(filter.size) { index ->
-                filter[index]?.let { tm -> TimeLineCard(item = tm, modifier = Modifier.padding(bottom = Spacing.medium), isLiked = false) }
+                filter[index]?.let {  item ->
+                    TimelineItem(item = item, viewModel = viewModel)
+                }
             }
         } else {
-            items(items) { tm ->
-                tm?.let { TimeLineCard(item = it, modifier = Modifier.padding(bottom = Spacing.medium), isLiked = false) }
+            items(items) { item ->
+                item?.let {
+                    TimelineItem(item = item, viewModel = viewModel)
+                }
             }
         }
 
@@ -186,6 +195,28 @@ fun TimeLineListView(
             }
             is LoadState.Error -> Unit
         }
+    }
+}
+
+@Composable
+fun TimelineItem(
+    item: UserPostResponse,
+    viewModel: DetailViewModel
+) {
+    viewModel.checkFavorite(item.id.orEmpty()).collectAsState(initial = RoomResult.Success(false)).value.let { state ->
+        val isLiked = if (state is RoomResult.Success) state.data else false
+        TimeLineCard(
+            item = item,
+            modifier = Modifier.padding(bottom = Spacing.medium),
+            isLiked = isLiked,
+            onLikeClick = { post ->
+                if (isLiked) {
+                    viewModel.deleteFavorite(post)
+                } else {
+                    viewModel.saveFavorite(post)
+                }
+            }
+        )
     }
 }
 
@@ -219,7 +250,7 @@ fun DetailUserInfo(
                 )
                 VerticalSpace(space = Spacing.Space8)
                 Text(
-                    text = "${user.title} ${user.firstName} ${user.lastName}",
+                    text = user.fullName,
                     style = MaterialTheme.typography.subtitle1.copy(
                         fontWeight = FontWeight.ExtraBold
                     ),
@@ -244,11 +275,11 @@ fun DetailUserInfo(
             }
         }
         VerticalSpace(space = Spacing.medium)
-        TextInfo(label = "Gender", value = user.gender.orEmpty())
-        TextInfo(label = "Date of birth", value = user.dateOfBirth.orEmpty())
-        TextInfo(label = "Join from", value = user.registerDate.orEmpty())
+        TextInfo(label = "Gender", value = user.gender.upFirst())
+        TextInfo(label = "Date of birth", value = user.dateOfBirthFormatted)
+        TextInfo(label = "Join from", value = user.joinDate)
         TextInfo(label = "Email", value = user.email.orEmpty())
-        TextInfo(label = "Address", value = "${user.location?.country}, ${user.location?.street}, ${user.location?.city}, ${user.location?.state}")
+        TextInfo(label = "Address", value = user.address)
     }
 }
 
@@ -269,7 +300,7 @@ fun TextInfo(
         Text(
             text = value,
             style = MaterialTheme.typography.body1,
-            maxLines = 1,
+            maxLines = 2,
             modifier = Modifier.weight(1f),
             overflow = TextOverflow.Ellipsis
         )
