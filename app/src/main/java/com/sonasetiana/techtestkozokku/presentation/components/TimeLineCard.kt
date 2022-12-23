@@ -85,7 +85,7 @@ fun TimeLineCard(
                 VerticalSpace(space = Spacing.medium)
                 LikeButton(
                     modifier = Modifier.align(Alignment.End),
-                    isLike = isLiked,
+                    isLiked = isLiked,
                     onClick = {
                         onLikeClick?.invoke(item)
                     }
