@@ -5,12 +5,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "tags")
-data class TagEntity(
+@Entity(tableName = "users")
+data class UserEntity(
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "tagId")
-    var tagId: String,
-    @ColumnInfo(name = "name")
-    var name: String,
+    @ColumnInfo(name = "userId")
+    var userId: String,
 )

@@ -19,4 +19,6 @@ data class FavoriteEntity(
     var publishDate: String,
     @ColumnInfo(name = "likes")
     var likes: Int,
+    @ColumnInfo(name = "tags")
+    var tags: String,
 )

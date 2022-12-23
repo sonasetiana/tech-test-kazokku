@@ -14,4 +14,7 @@ interface FavoriteDao {
 
     @Update
     fun updateFavorite(item: FavoriteEntity)
+
+    @Query("DELETE FROM favorite WHERE favoriteId = :favoriteId")
+    fun deleteFavorite(favoriteId: String)
 }

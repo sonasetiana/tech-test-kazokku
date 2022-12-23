@@ -8,8 +8,8 @@ import com.sonasetiana.techtestkozokku.data.remote.datasource.RemoteDataSource
 import com.sonasetiana.techtestkozokku.data.remote.datasource.RemoteDataSourceImpl
 import com.sonasetiana.techtestkozokku.data.remote.network.ApiServices
 import com.sonasetiana.techtestkozokku.data.remote.network.HeaderInterceptor
-import com.sonasetiana.techtestkozokku.domain.repository.DataRepository
 import com.sonasetiana.techtestkozokku.data.repository.DataRepositoryImpl
+import com.sonasetiana.techtestkozokku.domain.repository.DataRepository
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -23,11 +23,10 @@ val databaseModule = module {
         Room.databaseBuilder(
             androidContext(),
             LocalDatabase::class.java,
-            "Local.db"
+            "kazokku.db"
         ).fallbackToDestructiveMigration().build()
     }
     factory { get<LocalDatabase>().favoriteDao() }
-    factory { get<LocalDatabase>().tagDao() }
     factory { get<LocalDatabase>().ownerDao() }
 }
 

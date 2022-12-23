@@ -8,6 +8,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,7 +72,7 @@ fun DetailScreen(
                             contentPadding = PaddingValues(Spacing.medium)
                         ) {
                             item {
-                                DetailUserInfo(user = uiState.data)
+                                DetailUserInfo(user = uiState.data, isAdded = false)
                             }
                             if (keyword.isNotEmpty()) {
                                 val filter = timeLines.itemSnapshotList.filter { key ->
@@ -118,8 +119,13 @@ fun DetailScreen(
 @Composable
 fun DetailUserInfo(
     modifier: Modifier = Modifier,
-    user: UserDetailResponse
+    user: UserDetailResponse,
+    isAdded: Boolean,
+    onClick: ((String) -> Unit) ? = null
 ) {
+    var isAccountAdded by rememberSaveable {
+        mutableStateOf(isAdded)
+    }
     Column(modifier = modifier.padding(Spacing.medium)) {
         Box(
             modifier = Modifier
@@ -151,12 +157,15 @@ fun DetailUserInfo(
             HorizontalSpace(space = Spacing.normal)
             IconButton(
                 modifier = Modifier.align(Alignment.CenterStart),
-                onClick = { /*TODO*/ }
+                onClick = {
+                    isAccountAdded = !isAccountAdded
+                    onClick?.invoke(user.id.orEmpty())
+                }
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_person_added),
+                    painter = painterResource(id = if (isAccountAdded) R.drawable.ic_person_added else R.drawable.ic_add_person),
                     contentDescription = null,
-                    tint = Color.Green,
+                    tint = if (isAccountAdded) Color.Green else Color.Blue,
                     modifier = Modifier.size(Spacing.big)
                 )
             }

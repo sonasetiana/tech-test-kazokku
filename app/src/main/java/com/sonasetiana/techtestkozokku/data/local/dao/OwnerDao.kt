@@ -14,4 +14,7 @@ interface OwnerDao {
 
     @Update
     fun updateOwner(item: OwnerEntity)
+
+    @Query("DELETE FROM owner WHERE ownerId = :ownerId")
+    fun updateOwner(ownerId: String)
 }

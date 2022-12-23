@@ -2,7 +2,6 @@ package com.sonasetiana.techtestkozokku.data.local
 
 import com.sonasetiana.techtestkozokku.data.local.dao.FavoriteDao
 import com.sonasetiana.techtestkozokku.data.local.dao.OwnerDao
-import com.sonasetiana.techtestkozokku.data.local.dao.TagDao
 import com.sonasetiana.techtestkozokku.data.local.entity.FavoriteEntity
 import com.sonasetiana.techtestkozokku.data.local.entity.OwnerEntity
 import com.sonasetiana.techtestkozokku.data.local.entity.TagEntity
