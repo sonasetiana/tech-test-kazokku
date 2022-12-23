@@ -106,11 +106,11 @@ fun DetailScreen(
                                     key?.text?.lowercase()?.contains(keyword) == true
                                 }.toList()
                                 items(filter.size) { index ->
-                                    filter[index]?.let { tm -> TimeLineCard(item = tm, modifier = Modifier.padding(bottom = Spacing.medium)) }
+                                    filter[index]?.let { tm -> TimeLineCard(item = tm, modifier = Modifier.padding(bottom = Spacing.medium), isLiked = false) }
                                 }
                             } else {
                                 items(timeLines) { tm ->
-                                    tm?.let { TimeLineCard(item = it, modifier = Modifier.padding(bottom = Spacing.medium)) }
+                                    tm?.let { TimeLineCard(item = it, modifier = Modifier.padding(bottom = Spacing.medium), isLiked = false) }
                                 }
                             }
 

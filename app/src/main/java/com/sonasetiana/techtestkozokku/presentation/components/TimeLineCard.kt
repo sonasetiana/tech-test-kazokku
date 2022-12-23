@@ -27,7 +27,9 @@ import com.sonasetiana.techtestkozokku.presentation.theme.VerticalSpace
 fun TimeLineCard(
     modifier: Modifier = Modifier,
     item: UserPostResponse,
-    onClick: ((String) -> Unit)? = null
+    onClick: ((String) -> Unit)? = null,
+    isLiked: Boolean,
+    onLikeClick: ((UserPostResponse) -> Unit)? = null
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -83,7 +85,10 @@ fun TimeLineCard(
                 VerticalSpace(space = Spacing.medium)
                 LikeButton(
                     modifier = Modifier.align(Alignment.End),
-                    isLike = false
+                    isLike = isLiked,
+                    onClick = {
+                        onLikeClick?.invoke(item)
+                    }
                 )
             }
         }

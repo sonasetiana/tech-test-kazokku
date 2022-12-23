@@ -9,6 +9,8 @@ import androidx.room.PrimaryKey
 data class OwnerEntity(
     @PrimaryKey
     @NonNull
+    @ColumnInfo(name = "postId")
+    var postId: String,
     @ColumnInfo(name = "ownerId")
     var ownerId: String,
     @ColumnInfo(name = "title")

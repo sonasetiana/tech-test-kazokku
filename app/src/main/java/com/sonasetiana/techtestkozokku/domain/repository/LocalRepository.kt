@@ -1,14 +1,15 @@
 package com.sonasetiana.techtestkozokku.domain.repository
 
+import androidx.paging.PagingData
 import com.sonasetiana.techtestkozokku.data.local.db.RoomResult
-import com.sonasetiana.techtestkozokku.data.local.entity.FavoriteEntity
 import com.sonasetiana.techtestkozokku.data.local.entity.OwnerEntity
+import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
 import kotlinx.coroutines.flow.Flow
 
 interface LocalRepository {
-    fun getAllFavorite(): Flow<List<FavoriteEntity>>
+    fun getAllFavorite(): Flow<PagingData<UserPostResponse>>
 
-    fun checkFavorite(id: String): Flow<FavoriteEntity>
+    fun checkFavorite(id: String): Flow<RoomResult<Boolean>>
 
     fun checkUser(id: String): Flow<RoomResult<Boolean>>
 
@@ -16,9 +17,14 @@ interface LocalRepository {
 
     suspend fun saveUser(id: String)
 
-    suspend fun deleteFavorite(id: String)
-
     suspend fun deleteUser(id: String)
 
-    suspend fun deleteOwner(id: String)
+    suspend fun saveFavorite(data: UserPostResponse)
+
+    suspend fun deleteFavorite(data: UserPostResponse)
+
+    suspend fun saveOwner(data: UserPostResponse)
+
+    suspend fun deleteOwner(data: UserPostResponse)
+
 }

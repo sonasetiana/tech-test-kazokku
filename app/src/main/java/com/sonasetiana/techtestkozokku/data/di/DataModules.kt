@@ -26,7 +26,7 @@ val databaseModule = module {
         Room.databaseBuilder(
             androidContext(),
             LocalDatabase::class.java,
-            "kazokku.db"
+            "techtest.db"
         ).fallbackToDestructiveMigration().build()
     }
     factory { get<LocalDatabase>().favoriteDao() }

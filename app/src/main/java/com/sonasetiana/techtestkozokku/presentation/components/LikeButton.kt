@@ -21,13 +21,15 @@ import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
 @Composable
 fun LikeButton(
     modifier: Modifier = Modifier,
-    isLike: Boolean
+    isLike: Boolean,
+    onClick: (() -> Unit)? = null
 ) {
     var state by rememberSaveable { mutableStateOf(isLike) }
 
     Row(
         modifier = modifier.clickable {
            state = !state
+            onClick?.invoke()
         },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -38,7 +40,7 @@ fun LikeButton(
         )
         HorizontalSpace(space = Spacing.small)
         Text(
-            text = "Like",
+            text = "Liked",
             style = MaterialTheme.typography.body1.copy(
                 color = MaterialTheme.colors.primary,
                 fontWeight = FontWeight.ExtraBold

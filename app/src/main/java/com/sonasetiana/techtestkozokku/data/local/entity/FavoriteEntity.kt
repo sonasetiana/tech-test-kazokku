@@ -1,16 +1,14 @@
 package com.sonasetiana.techtestkozokku.data.local.entity
 
 import androidx.annotation.NonNull
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity(tableName = "favorite")
 data class FavoriteEntity(
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "favoriteId")
-    var favoriteId: String,
+    @ColumnInfo(name = "postId")
+    var postId: String,
     @ColumnInfo(name = "image")
     var image: String,
     @ColumnInfo(name = "title")
@@ -21,4 +19,14 @@ data class FavoriteEntity(
     var likes: Int,
     @ColumnInfo(name = "tags")
     var tags: String,
+)
+
+data class FavoriteRelationOwner(
+    @Embedded
+    val favorite: FavoriteEntity,
+    @Relation(
+        parentColumn = "postId",
+        entityColumn = "postId"
+    )
+    val owner: OwnerEntity? = null
 )
