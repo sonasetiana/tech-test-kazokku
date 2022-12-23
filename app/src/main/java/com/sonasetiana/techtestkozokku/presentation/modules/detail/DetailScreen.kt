@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
@@ -89,12 +90,14 @@ fun DetailScreen(
         viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
             when (uiState) {
                 is UiState.Loading -> {
+                    isRefreshing = true
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center)
                     )
                     viewModel.getDetail(userId)
                 }
                 is UiState.Success -> {
+                    isRefreshing = false
                     timeLines?.refresh()
                     Column(modifier = modifier) {
                         TopSearchBar(
@@ -129,6 +132,7 @@ fun DetailScreen(
                     }
                 }
                 is UiState.Error -> {
+                    isRefreshing = false
                     ErrorView(
                         message = uiState.message,
                         modifier = Modifier.align(Alignment.Center),
@@ -139,6 +143,9 @@ fun DetailScreen(
                 }
             }
         }
+
+
+        PullRefreshIndicator(isRefreshing, swipeRefreshState, Modifier.align(Alignment.TopCenter))
     }
 
 }
