@@ -1,6 +1,5 @@
 package com.sonasetiana.techtestkozokku.presentation.modules.timeline
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
@@ -44,48 +43,51 @@ fun TimeLineScreen(
 
     LazyColumn(
         modifier = modifier.pullRefresh(refreshState),
-        contentPadding = PaddingValues(Spacing.medium)
     ){
-        item {
-            if (selectedTag.isNotEmpty()) {
-                TagFilterView(
-                    tagName = selectedTag,
-                    onClick = {
-                        selectedTag = ""
-                        viewModel.setTagName(selectedTag)
-                        timeLineItems.refresh()
-                    },
-                    modifier = Modifier.padding(bottom = Spacing.medium)
-                )
-            }
-        }
-        items(
-            timeLineItems
-        ) { items ->
-            items?.let { timeLine ->
-                viewModel.checkFavorite(timeLine.id.orEmpty()).collectAsState(initial = RoomResult.Success(false)).value.let { state ->
-                    val isLiked = if (state is RoomResult.Success) state.data else false
-                    TimeLineCard(
-                        item = timeLine,
-                        modifier = Modifier.padding(bottom = Spacing.medium),
-                        onClick = { tagName ->
-                            selectedTag = tagName
+        if (!refreshing) {
+            item {
+                if (selectedTag.isNotEmpty()) {
+                    TagFilterView(
+                        tagName = selectedTag,
+                        onClick = {
+                            selectedTag = ""
                             viewModel.setTagName(selectedTag)
                             timeLineItems.refresh()
                         },
-                        isLiked = isLiked,
-                        onLikeClick = { post ->
-                            if (isLiked) {
-                                viewModel.deleteFavorite(post)
-                            } else {
-                                viewModel.saveFavorite(post)
-                            }
-                        }
+                        modifier = Modifier.padding(bottom = Spacing.medium)
                     )
                 }
+            }
+            items(
+                timeLineItems
+            ) { items ->
+                items?.let { timeLine ->
+                    viewModel.checkFavorite(timeLine.id.orEmpty())
+                        .collectAsState(initial = RoomResult.Success(false)).value.let { state ->
+                        val isLiked = if (state is RoomResult.Success) state.data else false
+                        TimeLineCard(
+                            item = timeLine,
+                            modifier = Modifier.padding(bottom = Spacing.normal),
+                            onClick = { tagName ->
+                                selectedTag = tagName
+                                viewModel.setTagName(selectedTag)
+                                timeLineItems.refresh()
+                            },
+                            isLiked = isLiked,
+                            onLikeClick = { post ->
+                                if (isLiked) {
+                                    viewModel.deleteFavorite(post)
+                                } else {
+                                    viewModel.saveFavorite(post)
+                                }
+                            }
+                        )
+                    }
 
+                }
             }
         }
+
 
         /**
          * State when Paging initial load

@@ -3,10 +3,9 @@ package com.sonasetiana.techtestkozokku.presentation.modules.detail
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -20,21 +19,26 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.sonasetiana.techtestkozokku.R
 import com.sonasetiana.techtestkozokku.data.local.db.RoomResult
 import com.sonasetiana.techtestkozokku.data.model.UserDetailResponse
+import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
 import com.sonasetiana.techtestkozokku.presentation.common.UiState
+import com.sonasetiana.techtestkozokku.presentation.components.ErrorView
 import com.sonasetiana.techtestkozokku.presentation.components.ShimmerGridLoading
 import com.sonasetiana.techtestkozokku.presentation.components.TimeLineCard
 import com.sonasetiana.techtestkozokku.presentation.components.TopSearchBar
 import com.sonasetiana.techtestkozokku.presentation.theme.HorizontalSpace
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
 import com.sonasetiana.techtestkozokku.presentation.theme.VerticalSpace
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
@@ -53,6 +57,19 @@ fun DetailScreen(
         mutableStateOf(false)
     }
 
+    val swipeRefreshScope = rememberCoroutineScope()
+    var isRefreshing by remember { mutableStateOf(false) }
+    fun onRefresh() = swipeRefreshScope.launch {
+        viewModel.getDetail(userId)
+    }
+    val swipeRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = ::onRefresh
+    )
+
+    /**
+     * checking user if added
+     */
     viewModel.checkUser(userId).collectAsState(initial = RoomResult.Success(false)).value.let { state ->
         isUserAdded = when(state){
             is RoomResult.Success -> {
@@ -64,83 +81,112 @@ fun DetailScreen(
         }
 
     }
-    viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
-        when (uiState) {
-            is UiState.Loading -> {
-                viewModel.getDetail(userId)
-            }
-            is UiState.Success -> {
-                timeLines?.refresh()
-                Column(modifier = modifier) {
-                    TopSearchBar(
-                        keyword = keyword,
-                        onValueChange = { text ->
-                            keyword = text
-                        },
-                        onClear = {
-                            keyword = ""
-                        },
-                        onBackPress = {
-                            navController.navigateUp()
-                        }
-                    )
-                    timeLines?.let {
-                        LazyColumn(
-                            contentPadding = PaddingValues(Spacing.medium)
-                        ) {
-                            item {
-                                DetailUserInfo(
-                                    user = uiState.data,
-                                    isAdded = isUserAdded,
-                                    onClick = { id ->
-                                        if (isUserAdded) {
-                                            viewModel.deleteUser(id)
-                                        } else {
-                                            viewModel.saveUser(id)
-                                        }
-                                    }
-                                )
-                            }
-                            if (keyword.isNotEmpty()) {
-                                val filter = timeLines.itemSnapshotList.filter { key ->
-                                    key?.text?.lowercase()?.contains(keyword) == true
-                                }.toList()
-                                items(filter.size) { index ->
-                                    filter[index]?.let { tm -> TimeLineCard(item = tm, modifier = Modifier.padding(bottom = Spacing.medium), isLiked = false) }
-                                }
-                            } else {
-                                items(timeLines) { tm ->
-                                    tm?.let { TimeLineCard(item = it, modifier = Modifier.padding(bottom = Spacing.medium), isLiked = false) }
-                                }
-                            }
 
-                            /**
-                             * State when Paging initial load
-                             */
-                            when(timeLines.loadState.refresh) {
-                                is LoadState.NotLoading -> {
-                                    //refreshing = false
-                                }
-                                is LoadState.Loading -> {
-                                    //refreshing = true
-                                    items(5) {
-                                        ShimmerGridLoading()
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
+            when (uiState) {
+                is UiState.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                    viewModel.getDetail(userId)
+                }
+                is UiState.Success -> {
+                    timeLines?.refresh()
+                    Column(modifier = modifier) {
+                        TopSearchBar(
+                            keyword = keyword,
+                            onValueChange = { text ->
+                                keyword = text
+                            },
+                            onClear = {
+                                keyword = ""
+                            },
+                            onBackPress = {
+                                navController.navigateUp()
+                            }
+                        )
+                        timeLines?.let { timeLineData ->
+                            TimeLineListView(
+                                modifier = Modifier.pullRefresh(swipeRefreshState),
+                                items = timeLineData,
+                                userData = uiState.data,
+                                isUserAdded = isUserAdded,
+                                searchKeyword = keyword,
+                                onAddUserClick = { id ->
+                                    if (isUserAdded) {
+                                        viewModel.deleteUser(id)
+                                    } else {
+                                        viewModel.saveUser(id)
                                     }
                                 }
-                                is LoadState.Error -> item {
-                                    Text(text = "Error")
-                                }
-                            }
+                            )
                         }
                     }
                 }
-            }
-            is UiState.Error -> {
-                Text(text = uiState.message)
+                is UiState.Error -> {
+                    ErrorView(
+                        message = uiState.message,
+                        modifier = Modifier.align(Alignment.Center),
+                        onClick = {
+                            viewModel.getDetail(userId)
+                        }
+                    )
+                }
             }
         }
     }
 
+}
+
+@Composable
+fun TimeLineListView(
+    modifier: Modifier = Modifier,
+    items: LazyPagingItems<UserPostResponse>,
+    userData: UserDetailResponse,
+    isUserAdded: Boolean,
+    searchKeyword: String,
+    onAddUserClick: ((String) -> Unit)? = null,
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(Spacing.medium)
+    ) {
+        item {
+            DetailUserInfo(
+                user = userData,
+                isAdded = isUserAdded,
+                onClick = onAddUserClick
+            )
+        }
+        if (searchKeyword.isNotEmpty()) {
+            val filter = items.itemSnapshotList.filter { key ->
+                key?.text?.lowercase()?.contains(searchKeyword) == true
+            }.toList()
+            items(filter.size) { index ->
+                filter[index]?.let { tm -> TimeLineCard(item = tm, modifier = Modifier.padding(bottom = Spacing.medium), isLiked = false) }
+            }
+        } else {
+            items(items) { tm ->
+                tm?.let { TimeLineCard(item = it, modifier = Modifier.padding(bottom = Spacing.medium), isLiked = false) }
+            }
+        }
+
+        /**
+         * State when Paging initial load
+         */
+        when(items.loadState.refresh) {
+            is LoadState.NotLoading -> Unit
+            is LoadState.Loading -> {
+                items(5) {
+                    ShimmerGridLoading()
+                }
+            }
+            is LoadState.Error -> Unit
+        }
+    }
 }
 
 @Composable

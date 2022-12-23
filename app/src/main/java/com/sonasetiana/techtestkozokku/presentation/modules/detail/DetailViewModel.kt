@@ -40,6 +40,7 @@ class DetailViewModel(
 
     fun getDetail(userId: String) {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             useCase.getUserDetail(userId)
                 .collect {
                     when(it) {

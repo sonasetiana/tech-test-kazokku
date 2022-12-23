@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,7 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -37,6 +33,7 @@ import com.sonasetiana.techtestkozokku.presentation.navigation.NavigationItem
 import com.sonasetiana.techtestkozokku.presentation.navigation.Screen
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
 import com.sonasetiana.techtestkozokku.presentation.theme.TechTestKozokkuTheme
+import com.sonasetiana.techtestkozokku.utils.upFirst
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,10 +58,19 @@ fun MainScreen(
     navController: NavHostController = rememberNavController()
 ) {
     var currentRoute by rememberSaveable {
+        mutableStateOf("Post")
+    }
+    var toolbarTitle by rememberSaveable {
         mutableStateOf("")
     }
     navController.addOnDestinationChangedListener { _, destination, _ ->
         currentRoute = destination.route.orEmpty()
+        toolbarTitle = if (currentRoute != Screen.Detail.route) {
+            currentRoute.upFirst()
+        } else {
+            toolbarTitle
+        }
+
     }
     Scaffold(
         modifier = modifier,
@@ -73,7 +79,7 @@ fun MainScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Kazokku",
+                            text = toolbarTitle,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colors.primary
@@ -95,7 +101,7 @@ fun MainScreen(
     ){ innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.TimeLine.route,
+            startDestination = Screen.Post.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = Screen.User.route) {
@@ -105,7 +111,7 @@ fun MainScreen(
                     }
                 )
             }
-            composable(route = Screen.TimeLine.route) {
+            composable(route = Screen.Post.route) {
                 TimeLineScreen()
             }
             composable(route = Screen.Favorite.route) {
@@ -126,24 +132,23 @@ fun BottomBar(
     modifier: Modifier = Modifier,
     navController: NavHostController
 ) {
-    BottomNavigation(modifier = modifier) {
+    BottomNavigation(
+        modifier = modifier
+    ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
         val navigationItem = listOf(
             NavigationItem(
-                title = stringResource(id = R.string.menu_user),
-                icon = Icons.Default.Person,
+                icon = painterResource(id = R.drawable.ic_person),
                 screen = Screen.User
             ),
             NavigationItem(
-                title = stringResource(id = R.string.menu_timeline),
-                icon = Icons.Default.List,
-                screen = Screen.TimeLine
+                icon = painterResource(id = R.drawable.ic_new),
+                screen = Screen.Post
             ),
             NavigationItem(
-                title = stringResource(id = R.string.menu_favorite),
-                icon = Icons.Default.Favorite,
+                icon = painterResource(id = R.drawable.ic_favorite),
                 screen = Screen.Favorite
             )
         )
@@ -152,11 +157,10 @@ fun BottomBar(
                 BottomNavigationItem(
                     icon = {
                         Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title
+                            painter = item.icon,
+                            contentDescription = null
                         )
                     },
-                    label = { Text(item.title) },
                     selected = currentRoute == item.screen.route,
                     onClick = {
                         navController.navigate(item.screen.route) {

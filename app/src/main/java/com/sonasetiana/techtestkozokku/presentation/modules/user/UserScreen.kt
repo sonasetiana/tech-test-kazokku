@@ -36,7 +36,7 @@ fun UserScreen(
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(Spacing.xNormal),
+        contentPadding = PaddingValues(Spacing.small),
         modifier = modifier.pullRefresh(refreshState)
     ) {
         if (!refreshing) {

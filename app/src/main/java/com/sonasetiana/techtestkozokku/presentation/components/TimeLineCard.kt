@@ -2,6 +2,7 @@ package com.sonasetiana.techtestkozokku.presentation.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
@@ -33,7 +34,8 @@ fun TimeLineCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        elevation = Spacing.xNormal
+        elevation = Spacing.small,
+        shape = RoundedCornerShape(0.dp)
     ) {
         Column {
             TimeLineHeader(
@@ -57,7 +59,7 @@ fun TimeLineCard(
             }
             VerticalSpace(space = Spacing.normal)
             Column(
-                modifier = Modifier.padding(Spacing.medium)
+                modifier = Modifier.padding(horizontal = Spacing.medium)
             ) {
 
                 TimeLineTagList(
@@ -66,7 +68,7 @@ fun TimeLineCard(
                         onClick?.invoke(tagName)
                     }
                 )
-                VerticalSpace(space = Spacing.medium)
+                VerticalSpace(space = Spacing.normal)
                 Text(
                     text = item.text.orEmpty(),
                     style = MaterialTheme.typography.body1,
@@ -90,6 +92,7 @@ fun TimeLineCard(
                         onLikeClick?.invoke(item)
                     }
                 )
+                VerticalSpace(space = Spacing.medium)
             }
         }
     }

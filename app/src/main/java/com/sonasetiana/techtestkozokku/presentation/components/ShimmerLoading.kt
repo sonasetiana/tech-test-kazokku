@@ -58,7 +58,7 @@ fun ShimmerGridLoading(
             .fillMaxWidth()
             .height(200.dp)
             .padding(Spacing.small)
-            .clip(RoundedCornerShape(Spacing.Space10))
+            .clip(RoundedCornerShape(Spacing.small))
             .background(brush)
         )
     }

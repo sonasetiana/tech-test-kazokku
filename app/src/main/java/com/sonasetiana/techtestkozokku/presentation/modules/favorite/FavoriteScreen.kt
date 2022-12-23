@@ -1,14 +1,16 @@
 package com.sonasetiana.techtestkozokku.presentation.modules.favorite
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.sonasetiana.techtestkozokku.presentation.components.ShimmerGridLoading
+import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
+import com.sonasetiana.techtestkozokku.presentation.components.EmptyView
 import com.sonasetiana.techtestkozokku.presentation.components.TimeLineCard
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
 import org.koin.androidx.compose.koinViewModel
@@ -21,33 +23,42 @@ fun FavoriteScreen(
 
     val favoriteItems = viewModel.favorites.collectAsLazyPagingItems()
 
-    LazyColumn(modifier = modifier) {
-        items(favoriteItems) { items ->
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        if (favoriteItems.itemCount > 0) {
+            FavoriteListView(
+                items = favoriteItems,
+                onLikeClick = { post ->
+                    viewModel.deleteFavorite(post)
+                    favoriteItems.refresh()
+                }
+            )
+        } else {
+            EmptyView()
+        }
+    }
+
+
+}
+
+@Composable
+fun FavoriteListView(
+    modifier: Modifier = Modifier,
+    items: LazyPagingItems<UserPostResponse>,
+    onLikeClick: ((UserPostResponse) -> Unit)? = null
+) {
+    LazyColumn(
+        modifier = modifier
+    ) {
+        items(items) { items ->
             items?.let { timeLine ->
                 TimeLineCard(
                     item = timeLine,
-                    modifier = Modifier.padding(bottom = Spacing.medium),
+                    modifier = Modifier.padding(bottom = Spacing.normal),
                     isLiked = true,
-                    onLikeClick = { post ->
-                        viewModel.deleteFavorite(post)
-                        favoriteItems.refresh()
-                    }
+                    onLikeClick = onLikeClick
                 )
-            }
-        }
-
-        /**
-         * State when Paging initial load
-         */
-        when(favoriteItems.loadState.refresh) {
-            is LoadState.NotLoading -> Unit
-            is LoadState.Loading -> {
-                items(10) {
-                    ShimmerGridLoading()
-                }
-            }
-            is LoadState.Error -> item {
-                Text(text = "Error")
             }
         }
     }
