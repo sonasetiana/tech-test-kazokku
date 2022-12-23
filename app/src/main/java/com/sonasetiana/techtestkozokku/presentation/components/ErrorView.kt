@@ -7,8 +7,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.sonasetiana.techtestkozokku.R
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
 import com.sonasetiana.techtestkozokku.presentation.theme.VerticalSpace
 
@@ -16,7 +18,7 @@ import com.sonasetiana.techtestkozokku.presentation.theme.VerticalSpace
 fun ErrorView(
     modifier: Modifier = Modifier,
     title: String = "Oops, Something Wrong",
-    message: String,
+    message: String?,
     onClick: () -> Unit
 ) {
     Column(
@@ -30,7 +32,7 @@ fun ErrorView(
         )
         VerticalSpace(space = Spacing.normal)
         Text(
-            text = message,
+            text = message ?: stringResource(id = R.string.rto_message),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )

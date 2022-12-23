@@ -1,18 +1,23 @@
 package com.sonasetiana.techtestkozokku.presentation.modules.timeline
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.sonasetiana.techtestkozokku.data.local.db.RoomResult
+import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
+import com.sonasetiana.techtestkozokku.presentation.components.ErrorView
 import com.sonasetiana.techtestkozokku.presentation.components.ShimmerGridLoading
 import com.sonasetiana.techtestkozokku.presentation.components.TagFilterView
 import com.sonasetiana.techtestkozokku.presentation.components.TimeLineCard
@@ -40,71 +45,118 @@ fun TimeLineScreen(
     }
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        TimeLineContent(
+            modifier = Modifier.pullRefresh(refreshState),
+            items = timeLineItems,
+            isRefreshing = refreshing,
+            selectedTag = selectedTag,
+            viewModel = viewModel,
+            onTagClick = { tagName ->
+                selectedTag = tagName
+                viewModel.setTagName(selectedTag)
+                timeLineItems.refresh()
+            },
+            onRemoveTagClick = {
+                selectedTag = ""
+                viewModel.setTagName(selectedTag)
+                timeLineItems.refresh()
+            },
+            onRefreshing = { isRefresh ->
+                refreshing = isRefresh
+            }
+        )
+        /**
+         * State when Paging initial load
+         */
 
+        if (timeLineItems.loadState.refresh is LoadState.Error) {
+            val message = (timeLineItems.loadState.refresh as LoadState.Error).error.message
+            ErrorView(
+                message = message,
+                modifier = Modifier.align(Alignment.Center)
+            ) {
+                timeLineItems.refresh()
+            }
+        }
+    }
+
+}
+
+@Composable
+fun TimeLineContent(
+    modifier: Modifier = Modifier,
+    items: LazyPagingItems<UserPostResponse>,
+    isRefreshing: Boolean,
+    selectedTag: String,
+    viewModel: TimeLineViewModel,
+    onTagClick: ((String) -> Unit)? = null,
+    onRemoveTagClick: (() -> Unit)? = null,
+    onRefreshing: ((Boolean) -> Unit)? = null,
+) {
     LazyColumn(
-        modifier = modifier.pullRefresh(refreshState),
+        modifier = modifier,
     ){
-        if (!refreshing) {
+        if (!isRefreshing) {
             item {
                 if (selectedTag.isNotEmpty()) {
                     TagFilterView(
                         tagName = selectedTag,
-                        onClick = {
-                            selectedTag = ""
-                            viewModel.setTagName(selectedTag)
-                            timeLineItems.refresh()
-                        },
+                        onClick = onRemoveTagClick,
                         modifier = Modifier.padding(bottom = Spacing.medium)
                     )
                 }
             }
-            items(
-                timeLineItems
-            ) { items ->
+            items(items) { items ->
                 items?.let { timeLine ->
-                    viewModel.checkFavorite(timeLine.id.orEmpty())
-                        .collectAsState(initial = RoomResult.Success(false)).value.let { state ->
-                        val isLiked = if (state is RoomResult.Success) state.data else false
-                        TimeLineCard(
-                            item = timeLine,
-                            modifier = Modifier.padding(bottom = Spacing.normal),
-                            onClick = { tagName ->
-                                selectedTag = tagName
-                                viewModel.setTagName(selectedTag)
-                                timeLineItems.refresh()
-                            },
-                            isLiked = isLiked,
-                            onLikeClick = { post ->
-                                if (isLiked) {
-                                    viewModel.deleteFavorite(post)
-                                } else {
-                                    viewModel.saveFavorite(post)
-                                }
-                            }
-                        )
-                    }
-
+                    TimeLineItem(
+                        viewModel = viewModel,
+                        item = timeLine,
+                        onTagClick = onTagClick
+                    )
                 }
             }
         }
-
 
         /**
          * State when Paging initial load
          */
-        when(timeLineItems.loadState.refresh) {
-            is LoadState.NotLoading -> {
-                refreshing = false
-            }
+        when(items.loadState.refresh) {
+            is LoadState.NotLoading -> onRefreshing?.invoke(false)
             is LoadState.Loading -> {
-                refreshing = true
+                onRefreshing?.invoke(true)
                 items(10) {
                     ShimmerGridLoading()
                 }
             }
-            is LoadState.Error -> item {
-                Text(text = "Error")
-            }
+            is LoadState.Error -> Unit
         }
     }
+}
+
+@Composable
+fun TimeLineItem(
+    modifier: Modifier = Modifier,
+    viewModel: TimeLineViewModel,
+    item: UserPostResponse,
+    onTagClick: ((String) -> Unit)?
+) {
+    viewModel.checkFavorite(item.id.orEmpty()).collectAsState(initial = RoomResult.Success(false)).value.let { state ->
+            val isLiked = if (state is RoomResult.Success) state.data else false
+            TimeLineCard(
+                item = item,
+                modifier = modifier.padding(bottom = Spacing.normal),
+                onClick = onTagClick,
+                isLiked = isLiked,
+                onLikeClick = { post ->
+                    if (isLiked) {
+                        viewModel.deleteFavorite(post)
+                    } else {
+                        viewModel.saveFavorite(post)
+                    }
+                }
+            )
+        }
 }
