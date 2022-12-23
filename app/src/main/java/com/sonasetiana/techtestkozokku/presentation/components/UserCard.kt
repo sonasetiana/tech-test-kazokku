@@ -11,11 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
-import com.sonasetiana.techtestkozokku.presentation.theme.TechTestKozokkuTheme
 
 @Composable
 fun UserCard(
@@ -30,7 +28,7 @@ fun UserCard(
         Column{
             AsyncImage(
                 model = picture,
-                contentDescription = "User Picture",
+                contentDescription = picture.split("/").last(),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
