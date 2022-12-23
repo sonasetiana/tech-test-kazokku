@@ -6,7 +6,8 @@ import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
 import com.sonasetiana.techtestkozokku.data.remote.network.ApiServices
 
 class AllPostPagingSource(
-    private val service: ApiServices
+    private val service: ApiServices,
+    private val limit: Int
 ) : PagingSource<Int, UserPostResponse>(){
     companion object {
         const val INITIAL_PAGE = 0
@@ -20,9 +21,8 @@ class AllPostPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UserPostResponse> {
         val page = params.key ?: INITIAL_PAGE
-        val pageSize = params.loadSize
         return try {
-            val response = service.getAllPost(page = page, limit = pageSize)
+            val response = service.getAllPost(page = page, limit = limit)
             LoadResult.Page(
                 data = response.data,
                 prevKey = if (page == INITIAL_PAGE) null else page - 1,

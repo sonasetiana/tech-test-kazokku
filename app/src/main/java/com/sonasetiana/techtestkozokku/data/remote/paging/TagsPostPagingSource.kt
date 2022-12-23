@@ -7,7 +7,8 @@ import com.sonasetiana.techtestkozokku.data.remote.network.ApiServices
 
 class TagsPostPagingSource(
     private val services: ApiServices,
-    private val tagName: String
+    private val tagName: String,
+    private val limit: Int
 ) : PagingSource<Int, UserPostResponse>(){
 
     companion object {
@@ -23,13 +24,12 @@ class TagsPostPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UserPostResponse> {
         val page = params.key ?: INITIAL_PAGE
-        val pageSize = params.loadSize
         return try {
-            val response = services.getPostByTags(tagName = tagName, page = page, limit = pageSize)
+            val response = services.getPostByTags(tagName = tagName, page = page, limit = limit)
             LoadResult.Page(
                 data = response.data,
                 prevKey = if (page == INITIAL_PAGE) null else page - 1,
-                nextKey = if (response.data.isEmpty()) null  else page - 1
+                nextKey = if (response.data.isEmpty()) null  else page + 1
             )
         }catch (e: Throwable) {
             LoadResult.Error(e)

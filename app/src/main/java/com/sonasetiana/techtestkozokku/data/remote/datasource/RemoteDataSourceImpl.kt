@@ -42,43 +42,43 @@ class RemoteDataSourceImpl(
         }
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getUserPost(
+    override fun getUserPost(
         userId: String,
         limit: Int?
     ): Flow<PagingData<UserPostResponse>> {
         return Pager(
             config = PagingConfig(
-                pageSize = limit ?: 20
+                pageSize = 10
             ),
             pagingSourceFactory = {
-                UserPostPagingSource(service, userId)
+                UserPostPagingSource(service, userId, limit ?: 20)
             }
         ).flow
     }
 
-    override suspend fun getAllPost(
+    override fun getAllPost(
         limit: Int?
     ): Flow<PagingData<UserPostResponse>> {
         return Pager(
             config = PagingConfig(
-                pageSize = limit ?: 20
+                pageSize = 10
             ),
             pagingSourceFactory = {
-                AllPostPagingSource(service)
+                AllPostPagingSource(service, limit ?: 20)
             }
         ).flow
     }
 
-    override suspend fun getPostByTags(
+    override fun getPostByTags(
         tagName: String,
         limit: Int?
     ): Flow<PagingData<UserPostResponse>> {
         return Pager(
             config = PagingConfig(
-                pageSize = limit ?: 20
+                pageSize = 10
             ),
             pagingSourceFactory = {
-                TagsPostPagingSource(service, tagName)
+                TagsPostPagingSource(service, tagName, limit ?: 20)
             }
         ).flow
     }

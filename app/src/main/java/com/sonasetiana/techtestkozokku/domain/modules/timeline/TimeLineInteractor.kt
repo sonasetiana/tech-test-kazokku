@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
 class TimeLineInteractor(
     private val repository: DataRepository
 ) : TimeLineUseCase {
-    override suspend fun getAllPost(limit: Int?): Flow<PagingData<UserPostResponse>> = repository.getAllPost(limit)
+    override fun getAllPost(limit: Int?): Flow<PagingData<UserPostResponse>> = repository.getAllPost(limit)
 
-    override suspend fun getPostByTags(
+    override fun getPostByTags(
         tagName: String,
         limit: Int?
     ): Flow<PagingData<UserPostResponse>> = repository.getPostByTags(tagName, limit)

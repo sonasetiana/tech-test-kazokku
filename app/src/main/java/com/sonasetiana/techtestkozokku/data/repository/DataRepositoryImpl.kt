@@ -16,14 +16,14 @@ class DataRepositoryImpl(
 
     override suspend fun getUserDetail(userId: String): Flow<ApiResponse<UserDetailResponse>> = remoteDataSource.getUserDetail(userId)
 
-    override suspend fun getUserPost(
+    override fun getUserPost(
         userId: String,
         limit: Int?
     ): Flow<PagingData<UserPostResponse>> = remoteDataSource.getUserPost(userId, limit)
 
-    override suspend fun getAllPost(limit: Int?): Flow<PagingData<UserPostResponse>> = remoteDataSource.getAllPost(limit)
+    override fun getAllPost(limit: Int?): Flow<PagingData<UserPostResponse>> = remoteDataSource.getAllPost(limit)
 
-    override suspend fun getPostByTags(
+    override fun getPostByTags(
         tagName: String,
         limit: Int?
     ): Flow<PagingData<UserPostResponse>> = remoteDataSource.getPostByTags(tagName, limit)

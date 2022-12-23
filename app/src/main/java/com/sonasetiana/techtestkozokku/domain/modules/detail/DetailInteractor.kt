@@ -12,7 +12,7 @@ class DetailInteractor(
 ) : DetailUseCase {
     override suspend fun getUserDetail(userId: String): Flow<ApiResponse<UserDetailResponse>> = repository.getUserDetail(userId)
 
-    override suspend fun getUserPost(
+    override fun getUserPost(
         userId: String,
         limit: Int?
     ): Flow<PagingData<UserPostResponse>> = repository.getUserPost(userId, limit)

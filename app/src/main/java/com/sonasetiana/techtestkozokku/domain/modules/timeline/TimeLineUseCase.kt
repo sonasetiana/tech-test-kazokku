@@ -5,6 +5,6 @@ import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
 import kotlinx.coroutines.flow.Flow
 
 interface TimeLineUseCase {
-    suspend fun getAllPost(limit: Int?): Flow<PagingData<UserPostResponse>>
-    suspend fun getPostByTags(tagName: String, limit: Int?): Flow<PagingData<UserPostResponse>>
+    fun getAllPost(limit: Int?): Flow<PagingData<UserPostResponse>>
+    fun getPostByTags(tagName: String, limit: Int?): Flow<PagingData<UserPostResponse>>
 }

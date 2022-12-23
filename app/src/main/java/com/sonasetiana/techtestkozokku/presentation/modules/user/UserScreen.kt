@@ -1,5 +1,6 @@
 package com.sonasetiana.techtestkozokku.presentation.modules.user
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,7 +22,8 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UserScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    openDetail: ((String) -> Unit) ? = null
 ) {
     val viewModel = koinViewModel<UserViewModel>()
     val userItems = viewModel.userListState.collectAsLazyPagingItems()
@@ -43,14 +45,13 @@ fun UserScreen(
                     UserCard(
                         fullName = "${user.title} ${user.firstName} ${user.lastName}",
                         picture = user.picture.orEmpty(),
-                        modifier = Modifier.padding(Spacing.small)
+                        modifier = Modifier.padding(Spacing.small).clickable {
+                            openDetail?.invoke(user.id.orEmpty())
+                        }
                     )
                 }
             }
         }
-        /**
-         * State when Paging initial load
-         */
         /**
          * State when Paging initial load
          */
