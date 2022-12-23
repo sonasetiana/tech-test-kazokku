@@ -1,8 +1,8 @@
 package com.sonasetiana.techtestkozokku.domain.modules.favorite
 
-import com.sonasetiana.techtestkozokku.domain.repository.DataRepository
+import com.sonasetiana.techtestkozokku.domain.repository.RemoteRepository
 
 class FavoriteInteractor(
-    private val repository: DataRepository
+    private val repository: RemoteRepository
 ) : FavoriteUseCase {
 }

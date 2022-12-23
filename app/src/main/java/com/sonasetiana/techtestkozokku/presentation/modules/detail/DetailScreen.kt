@@ -24,6 +24,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.sonasetiana.techtestkozokku.R
+import com.sonasetiana.techtestkozokku.data.local.db.RoomResult
 import com.sonasetiana.techtestkozokku.data.model.UserDetailResponse
 import com.sonasetiana.techtestkozokku.presentation.common.UiState
 import com.sonasetiana.techtestkozokku.presentation.components.ShimmerGridLoading
@@ -47,6 +48,22 @@ fun DetailScreen(
     var keyword by remember {
         mutableStateOf("")
     }
+
+    var isUserAdded by remember {
+        mutableStateOf(false)
+    }
+
+    viewModel.checkUser(userId).collectAsState(initial = RoomResult.Success(false)).value.let { state ->
+        isUserAdded = when(state){
+            is RoomResult.Success -> {
+                state.data
+            }
+            is RoomResult.Failure -> {
+                false
+            }
+        }
+
+    }
     viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
@@ -67,12 +84,22 @@ fun DetailScreen(
                             navController.navigateUp()
                         }
                     )
-                    timeLines?.let { data ->
+                    timeLines?.let {
                         LazyColumn(
                             contentPadding = PaddingValues(Spacing.medium)
                         ) {
                             item {
-                                DetailUserInfo(user = uiState.data, isAdded = false)
+                                DetailUserInfo(
+                                    user = uiState.data,
+                                    isAdded = isUserAdded,
+                                    onClick = { id ->
+                                        if (isUserAdded) {
+                                            viewModel.deleteUser(id)
+                                        } else {
+                                            viewModel.saveUser(id)
+                                        }
+                                    }
+                                )
                             }
                             if (keyword.isNotEmpty()) {
                                 val filter = timeLines.itemSnapshotList.filter { key ->

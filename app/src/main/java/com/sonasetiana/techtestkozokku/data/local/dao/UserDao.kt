@@ -1,21 +1,17 @@
 package com.sonasetiana.techtestkozokku.data.local.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import com.sonasetiana.techtestkozokku.data.local.entity.OwnerEntity
+import androidx.room.*
 import com.sonasetiana.techtestkozokku.data.local.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
     @Query("SELECT * FROM users WHERE userId=:userId")
-    fun checkUser(userId: String): Flow<UserEntity>
+    fun checkUser(userId: String): Flow<List<UserEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(items: List<OwnerEntity>)
+    suspend fun insertUser(items: UserEntity)
 
-    @Query("DELETE FROM users WHERE userId = :userId")
-    fun updateUser(userId: String)
+    @Delete
+    suspend fun deleteUser(entity: UserEntity)
 }

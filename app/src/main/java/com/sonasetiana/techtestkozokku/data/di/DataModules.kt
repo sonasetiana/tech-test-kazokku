@@ -2,14 +2,17 @@ package com.sonasetiana.techtestkozokku.data.di
 
 import androidx.room.Room
 import com.sonasetiana.techtestkozokku.BuildConfig
-import com.sonasetiana.techtestkozokku.data.local.LocalDataSource
+import com.sonasetiana.techtestkozokku.data.local.datasource.LocalDataSource
+import com.sonasetiana.techtestkozokku.data.local.datasource.LocalDataSourceImpl
 import com.sonasetiana.techtestkozokku.data.local.db.LocalDatabase
 import com.sonasetiana.techtestkozokku.data.remote.datasource.RemoteDataSource
 import com.sonasetiana.techtestkozokku.data.remote.datasource.RemoteDataSourceImpl
 import com.sonasetiana.techtestkozokku.data.remote.network.ApiServices
 import com.sonasetiana.techtestkozokku.data.remote.network.HeaderInterceptor
-import com.sonasetiana.techtestkozokku.data.repository.DataRepositoryImpl
-import com.sonasetiana.techtestkozokku.domain.repository.DataRepository
+import com.sonasetiana.techtestkozokku.data.repository.LocalRepositoryImpl
+import com.sonasetiana.techtestkozokku.data.repository.RemoteRepositoryImpl
+import com.sonasetiana.techtestkozokku.domain.repository.LocalRepository
+import com.sonasetiana.techtestkozokku.domain.repository.RemoteRepository
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -28,6 +31,7 @@ val databaseModule = module {
     }
     factory { get<LocalDatabase>().favoriteDao() }
     factory { get<LocalDatabase>().ownerDao() }
+    factory { get<LocalDatabase>().userDao() }
 }
 
 val networkModule = module {
@@ -50,7 +54,8 @@ val networkModule = module {
 }
 
 val repositoryModule = module {
-    single { LocalDataSource(get(), get(), get()) }
+    single<LocalDataSource> { LocalDataSourceImpl(get(), get(), get()) }
     single<RemoteDataSource> { RemoteDataSourceImpl(get()) }
-    single<DataRepository> { DataRepositoryImpl(get()) }
+    single<RemoteRepository> { RemoteRepositoryImpl(get()) }
+    single<LocalRepository> { LocalRepositoryImpl(get()) }
 }

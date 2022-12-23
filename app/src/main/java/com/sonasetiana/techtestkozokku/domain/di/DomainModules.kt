@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val domainModules = module {
     factory<UserUseCase> { UserInteractor(get()) }
-    factory<DetailUseCase> { DetailInteractor(get()) }
+    factory<DetailUseCase> { DetailInteractor(get(), get()) }
     factory<TimeLineUseCase> { TimeLineInteractor(get()) }
     factory<FavoriteUseCase> { FavoriteInteractor(get()) }
 }

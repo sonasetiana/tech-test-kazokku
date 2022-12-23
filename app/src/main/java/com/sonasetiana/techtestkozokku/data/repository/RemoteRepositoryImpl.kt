@@ -6,12 +6,12 @@ import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
 import com.sonasetiana.techtestkozokku.data.model.UserResponse
 import com.sonasetiana.techtestkozokku.data.remote.datasource.RemoteDataSource
 import com.sonasetiana.techtestkozokku.data.remote.network.ApiResponse
-import com.sonasetiana.techtestkozokku.domain.repository.DataRepository
+import com.sonasetiana.techtestkozokku.domain.repository.RemoteRepository
 import kotlinx.coroutines.flow.Flow
 
-class DataRepositoryImpl(
+class RemoteRepositoryImpl(
     private val remoteDataSource: RemoteDataSource
-) : DataRepository {
+) : RemoteRepository {
     override fun getUserList(limit: Int?): Flow<PagingData<UserResponse>> = remoteDataSource.getUserList(limit)
 
     override suspend fun getUserDetail(userId: String): Flow<ApiResponse<UserDetailResponse>> = remoteDataSource.getUserDetail(userId)

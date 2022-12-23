@@ -7,7 +7,7 @@ import com.sonasetiana.techtestkozokku.data.model.UserResponse
 import com.sonasetiana.techtestkozokku.data.remote.network.ApiResponse
 import kotlinx.coroutines.flow.Flow
 
-interface DataRepository {
+interface RemoteRepository {
     fun getUserList(limit: Int?): Flow<PagingData<UserResponse>>
     suspend fun getUserDetail(userId: String): Flow<ApiResponse<UserDetailResponse>>
     fun getUserPost(userId: String, limit: Int?): Flow<PagingData<UserPostResponse>>

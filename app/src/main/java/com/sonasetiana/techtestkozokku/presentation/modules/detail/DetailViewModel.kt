@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.sonasetiana.techtestkozokku.data.local.db.RoomResult
 import com.sonasetiana.techtestkozokku.data.model.UserDetailResponse
 import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
 import com.sonasetiana.techtestkozokku.data.remote.network.ApiResponse
@@ -22,6 +23,20 @@ class DetailViewModel(
         get() = _uiState
 
     var timeLine: Flow<PagingData<UserPostResponse>>? = null
+
+    fun checkUser(userId: String): Flow<RoomResult<Boolean>> = useCase.checkUser(userId)
+
+    fun saveUser(userId: String) {
+        viewModelScope.launch {
+            useCase.saveUser(userId)
+        }
+    }
+
+    fun deleteUser(userId: String) {
+        viewModelScope.launch {
+            useCase.deleteUser(userId)
+        }
+    }
 
     fun getDetail(userId: String) {
         viewModelScope.launch {
