@@ -103,6 +103,10 @@ dependencies {
     //lottie
     implementation 'com.airbnb.android:lottie-compose:5.2.0'
 
+    //chucker
+    debugImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
+
     androidTestImplementation "androidx.navigation:navigation-testing:2.5.3"
     androidTestImplementation "org.mockito:mockito-android:2.22.0"
     androidTestImplementation "io.insert-koin:koin-test:$koin_core_version"

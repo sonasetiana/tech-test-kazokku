@@ -1,6 +1,7 @@
 package com.sonasetiana.techtestkozokku.data.di
 
 import androidx.room.Room
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.sonasetiana.techtestkozokku.BuildConfig
 import com.sonasetiana.techtestkozokku.data.local.datasource.LocalDataSource
 import com.sonasetiana.techtestkozokku.data.local.datasource.LocalDataSourceImpl
@@ -39,6 +40,7 @@ val networkModule = module {
         OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .addInterceptor(HeaderInterceptor())
+            .addInterceptor(ChuckerInterceptor.Builder(androidContext()).build())
             .connectTimeout(120, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)
             .build()
