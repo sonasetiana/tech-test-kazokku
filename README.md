@@ -15,3 +15,4 @@ Tech Stack:
 - Koin
 - Lottie
 - Coil
+- Chucker
