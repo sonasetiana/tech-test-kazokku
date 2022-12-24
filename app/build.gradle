@@ -103,6 +103,11 @@ dependencies {
     //lottie
     implementation 'com.airbnb.android:lottie-compose:5.2.0'
 
+    androidTestImplementation "androidx.navigation:navigation-testing:2.5.3"
+    androidTestImplementation "org.mockito:mockito-android:2.22.0"
+    androidTestImplementation "io.insert-koin:koin-test:$koin_core_version"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
+
 }
 
 kapt {

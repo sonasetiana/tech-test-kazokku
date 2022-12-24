@@ -29,7 +29,7 @@ fun LikeButton(
         Icon(
             painter = painterResource(id = if (isLiked) R.drawable.ic_favorite else R.drawable.ic_favorite_border),
             contentDescription = null,
-            tint = MaterialTheme.colors.primary
+            tint = MaterialTheme.colors.primary,
         )
         HorizontalSpace(space = Spacing.small)
         Text(

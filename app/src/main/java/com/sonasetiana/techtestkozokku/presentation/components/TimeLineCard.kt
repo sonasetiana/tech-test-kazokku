@@ -13,15 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
 import com.sonasetiana.techtestkozokku.presentation.theme.HorizontalSpace
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
-import com.sonasetiana.techtestkozokku.presentation.theme.TechTestKozokkuTheme
 import com.sonasetiana.techtestkozokku.presentation.theme.VerticalSpace
 
 @Composable
@@ -29,7 +28,7 @@ fun TimeLineCard(
     modifier: Modifier = Modifier,
     item: UserPostResponse,
     onClick: ((String) -> Unit)? = null,
-    isLiked: Boolean,
+    isLiked: Boolean = false,
     onLikeClick: ((UserPostResponse) -> Unit)? = null
 ) {
     Card(
@@ -61,7 +60,6 @@ fun TimeLineCard(
             Column(
                 modifier = Modifier.padding(horizontal = Spacing.medium)
             ) {
-
                 TimeLineTagList(
                     tagList = item.tags,
                     onClick = { tagName ->
@@ -86,7 +84,7 @@ fun TimeLineCard(
                 Divider()
                 VerticalSpace(space = Spacing.medium)
                 LikeButton(
-                    modifier = Modifier.align(Alignment.End),
+                    modifier = Modifier.align(Alignment.End).testTag("LikeButton_${item.id}"),
                     isLiked = isLiked,
                     onClick = {
                         onLikeClick?.invoke(item)
@@ -150,20 +148,12 @@ fun TimeLineTagList(
         ) {
             tagList.map { TagView(
                     tagName = it,
-                    modifier = Modifier.padding(end = Spacing.small),
+                    modifier = Modifier.padding(end = Spacing.small).testTag(it),
                     onClick = {
                         onClick?.invoke(it)
                     }
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewTagView() {
-    TechTestKozokkuTheme {
-
     }
 }

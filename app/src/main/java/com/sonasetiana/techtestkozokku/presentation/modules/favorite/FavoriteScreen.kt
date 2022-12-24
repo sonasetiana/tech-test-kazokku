@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
@@ -13,12 +15,14 @@ import com.sonasetiana.techtestkozokku.data.model.UserPostResponse
 import com.sonasetiana.techtestkozokku.presentation.components.EmptyView
 import com.sonasetiana.techtestkozokku.presentation.components.TimeLineCard
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
+import com.sonasetiana.techtestkozokku.utils.toast
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun FavoriteScreen(
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val viewModel = koinViewModel<FavoriteViewModel>()
 
     val favoriteItems = viewModel.favorites.collectAsLazyPagingItems()
@@ -32,6 +36,7 @@ fun FavoriteScreen(
                 onLikeClick = { post ->
                     viewModel.deleteFavorite(post)
                     favoriteItems.refresh()
+                    context.toast("Success delete from favorite")
                 }
             )
         } else {
@@ -49,7 +54,7 @@ fun FavoriteListView(
     onLikeClick: ((UserPostResponse) -> Unit)? = null
 ) {
     LazyColumn(
-        modifier = modifier
+        modifier = modifier.testTag("FavoriteList")
     ) {
         items(items) { items ->
             items?.let { timeLine ->

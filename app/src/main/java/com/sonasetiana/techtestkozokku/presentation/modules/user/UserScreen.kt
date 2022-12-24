@@ -14,6 +14,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -86,7 +87,7 @@ fun UserListView(
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(Spacing.small),
-        modifier = modifier
+        modifier = modifier.testTag("UserList")
     ) {
         if (!isRefreshing) {
             items(items.itemCount) { index ->
@@ -110,8 +111,10 @@ fun UserListView(
             is LoadState.NotLoading -> onRefreshing?.invoke(false)
             is LoadState.Loading -> {
                 onRefreshing?.invoke(true)
-                items(10) {
-                    ShimmerGridLoading()
+                items(10) { index ->
+                    ShimmerGridLoading(
+                        modifier = Modifier.testTag("ShimmerGridLoading$index")
+                    )
                 }
             }
             is LoadState.Error -> Unit

@@ -11,6 +11,7 @@ class TimeLineInteractor(
     private val repository: RemoteRepository,
     private val localRepository: LocalRepository,
 ) : TimeLineUseCase {
+
     override fun getAllPost(limit: Int?): Flow<PagingData<UserPostResponse>> = repository.getAllPost(limit)
 
     override fun getPostByTags(

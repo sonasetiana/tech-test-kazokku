@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sonasetiana.techtestkozokku.R
@@ -81,7 +82,10 @@ fun TopSearchBar(
     modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = onBackPress) {
+        IconButton(
+            onClick = onBackPress,
+            modifier = Modifier.testTag("BackButton")
+        ) {
             Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
         }
 
@@ -89,7 +93,7 @@ fun TopSearchBar(
             keyword = keyword,
             onValueChange =
             onValueChange, onClear = onClear,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).testTag("SearchField")
         )
 
     }

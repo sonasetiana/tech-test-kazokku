@@ -12,6 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -23,6 +25,7 @@ import com.sonasetiana.techtestkozokku.presentation.components.ShimmerGridLoadin
 import com.sonasetiana.techtestkozokku.presentation.components.TagFilterView
 import com.sonasetiana.techtestkozokku.presentation.components.TimeLineCard
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
+import com.sonasetiana.techtestkozokku.utils.toast
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -50,7 +53,7 @@ fun TimeLineScreen(
         modifier = modifier.fillMaxSize()
     ) {
         TimeLineContent(
-            modifier = Modifier.pullRefresh(refreshState),
+            modifier = Modifier.pullRefresh(refreshState).testTag("PostList"),
             items = timeLineItems,
             isRefreshing = refreshing,
             selectedTag = selectedTag,
@@ -101,6 +104,7 @@ fun TimeLineContent(
     onRemoveTagClick: (() -> Unit)? = null,
     onRefreshing: ((Boolean) -> Unit)? = null,
 ) {
+
     LazyColumn(
         modifier = modifier,
     ){
@@ -132,8 +136,11 @@ fun TimeLineContent(
             is LoadState.NotLoading -> onRefreshing?.invoke(false)
             is LoadState.Loading -> {
                 onRefreshing?.invoke(true)
-                items(10) {
-                    ShimmerGridLoading()
+                items(10) { index ->
+                    ShimmerGridLoading(
+                        modifier = Modifier
+                            .testTag("ShimmerGridLoading$index")
+                    )
                 }
             }
             is LoadState.Error -> Unit
@@ -141,13 +148,15 @@ fun TimeLineContent(
     }
 }
 
+
 @Composable
 fun TimeLineItem(
     modifier: Modifier = Modifier,
     viewModel: TimeLineViewModel,
     item: UserPostResponse,
-    onTagClick: ((String) -> Unit)?
+    onTagClick: ((String) -> Unit)?,
 ) {
+    val context = LocalContext.current
     viewModel.checkFavorite(item.id.orEmpty()).collectAsState(initial = RoomResult.Success(false)).value.let { state ->
             val isLiked = if (state is RoomResult.Success) state.data else false
             TimeLineCard(
@@ -156,11 +165,14 @@ fun TimeLineItem(
                 onClick = onTagClick,
                 isLiked = isLiked,
                 onLikeClick = { post ->
-                    if (isLiked) {
+                    val message = if (isLiked) {
                         viewModel.deleteFavorite(post)
+                        "Success delete from favorite"
                     } else {
                         viewModel.saveFavorite(post)
+                        "Success save to favorite"
                     }
+                    context.toast(message)
                 }
             )
         }

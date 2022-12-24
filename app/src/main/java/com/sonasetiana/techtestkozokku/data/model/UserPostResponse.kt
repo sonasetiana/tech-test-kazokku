@@ -25,6 +25,7 @@ data class UserPostResponse(
 
 	@field:SerializedName("owner")
 	val owner: UserResponse? = null
+
 ) {
 	val datePublishing: String
 	get() = DateExt.parseDate(publishDate)

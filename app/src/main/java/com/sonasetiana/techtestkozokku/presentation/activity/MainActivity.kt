@@ -14,7 +14,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -140,14 +142,17 @@ fun BottomBar(
 
         val navigationItem = listOf(
             NavigationItem(
+                title = stringResource(id = R.string.menu_user),
                 icon = painterResource(id = R.drawable.ic_person),
                 screen = Screen.User
             ),
             NavigationItem(
+                title = stringResource(id = R.string.menu_posts),
                 icon = painterResource(id = R.drawable.ic_new),
                 screen = Screen.Post
             ),
             NavigationItem(
+                title = stringResource(id = R.string.menu_favorite),
                 icon = painterResource(id = R.drawable.ic_favorite),
                 screen = Screen.Favorite
             )
@@ -155,6 +160,7 @@ fun BottomBar(
         BottomNavigation {
             navigationItem.map { item ->
                 BottomNavigationItem(
+                    modifier = Modifier.testTag(item.title),
                     icon = {
                         Icon(
                             painter = item.icon,

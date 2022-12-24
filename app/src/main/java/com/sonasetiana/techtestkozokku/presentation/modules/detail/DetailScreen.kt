@@ -14,11 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -36,6 +39,7 @@ import com.sonasetiana.techtestkozokku.presentation.components.TopSearchBar
 import com.sonasetiana.techtestkozokku.presentation.theme.HorizontalSpace
 import com.sonasetiana.techtestkozokku.presentation.theme.Spacing
 import com.sonasetiana.techtestkozokku.presentation.theme.VerticalSpace
+import com.sonasetiana.techtestkozokku.utils.toast
 import com.sonasetiana.techtestkozokku.utils.upFirst
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -44,9 +48,10 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
+    navController: NavHostController = rememberNavController(),
     userId: String
 ) {
+    val context = LocalContext.current
     val viewModel = koinViewModel<DetailViewModel>()
 
     val timeLines = viewModel.timeLine?.collectAsLazyPagingItems()
@@ -92,7 +97,7 @@ fun DetailScreen(
                 is UiState.Loading -> {
                     isRefreshing = true
                     CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center).testTag("DetailLoading")
                     )
                     viewModel.getDetail(userId)
                 }
@@ -121,11 +126,14 @@ fun DetailScreen(
                                 searchKeyword = keyword,
                                 viewModel = viewModel,
                                 onAddUserClick = { id ->
-                                    if (isUserAdded) {
+                                    val message = if (isUserAdded) {
                                         viewModel.deleteUser(id)
+                                        "Success delete ${uiState.data.fullName}"
                                     } else {
                                         viewModel.saveUser(id)
+                                        "Success add ${uiState.data.fullName}"
                                     }
+                                    context.toast(message)
                                 }
                             )
                         }
@@ -163,7 +171,7 @@ fun TimeLineListView(
 
 
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.testTag("PostUserList"),
     ) {
         item {
             DetailUserInfo(
@@ -196,8 +204,10 @@ fun TimeLineListView(
         when(items.loadState.refresh) {
             is LoadState.NotLoading -> Unit
             is LoadState.Loading -> {
-                items(5) {
-                    ShimmerGridLoading()
+                items(5) { index ->
+                    ShimmerGridLoading(
+                        modifier = Modifier.testTag("ShimmerGridLoading$index")
+                    )
                 }
             }
             is LoadState.Error -> Unit
@@ -210,6 +220,7 @@ fun TimelineItem(
     item: UserPostResponse,
     viewModel: DetailViewModel
 ) {
+    val context = LocalContext.current
     viewModel.checkFavorite(item.id.orEmpty()).collectAsState(initial = RoomResult.Success(false)).value.let { state ->
         val isLiked = if (state is RoomResult.Success) state.data else false
         TimeLineCard(
@@ -217,11 +228,14 @@ fun TimelineItem(
             modifier = Modifier.padding(bottom = Spacing.medium),
             isLiked = isLiked,
             onLikeClick = { post ->
-                if (isLiked) {
+                val message = if (isLiked) {
                     viewModel.deleteFavorite(post)
+                    "Success delete from favorite"
                 } else {
                     viewModel.saveFavorite(post)
+                    "Success save to favorite"
                 }
+                context.toast(message)
             }
         )
     }
@@ -267,7 +281,7 @@ fun DetailUserInfo(
             }
             HorizontalSpace(space = Spacing.normal)
             IconButton(
-                modifier = Modifier.align(Alignment.CenterStart),
+                modifier = Modifier.align(Alignment.CenterStart).testTag("AddUserButton"),
                 onClick = {
                     isAccountAdded = !isAccountAdded
                     onClick?.invoke(user.id.orEmpty())
@@ -296,7 +310,7 @@ fun TextInfo(
     label: String,
     value: String
 ) {
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    Row(modifier = modifier, verticalAlignment = Alignment.Top) {
         Text(
             text = "$label :",
             style = MaterialTheme.typography.body2.copy(
